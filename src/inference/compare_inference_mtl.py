@@ -18,9 +18,9 @@ from torchvision import transforms
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 
-from ..dataset import default_image_loader
-from ..stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
-from ..text_similarity_embedding import EmbeddingSimilarityScorer
+from src.data.dataset import default_image_loader
+from src.models.stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
+from src.eval.text_similarity_embedding import EmbeddingSimilarityScorer
 
 
 def parse_args() -> argparse.Namespace:

@@ -10,17 +10,14 @@ To make the LLM reason about the images, we train it with **multi‑task learnin
 
 ## Repository Layout (key files)
 
-- `mtl_weatherqa/`  
-  - `train_mtl_weatherqa.py` — Uniform MTL (Tasks A/B/C mixed)  
-  - `train_summary_centric.py` — Summary‑focused MTL (warm‑up A+C → summary‑heavy)  
-  - `inference_simple.py` — Stage2 LoRA inference (with Stage1 encoder)  
-  - `inference_simple_pretrained.py` — Pretrained Mistral text‑only baseline  
-  - `compare_inference_mtl.py` — Compare pretrained vs baseline vs MTL models  
-  - `check_cot_stats.py` — Inspect CoT targets/truncation stats  
-  - `datasets.py`, `data_utils.py`, `model_utils.py` — shared loaders/utilities
-- `stage1_stage2_integration.py` — Wraps Stage1 encoder/classifier for Stage2.
-- `text_similarity_embedding.py`, `text_similarity_llm_judge.py` — Evaluation metrics.
-- `eval_simple.py` — Batch eval/plotting (embedding + optional LLM judge).
+- `src/`
+  - `data/` — `dataset.py` (default loader), `mtl_datasets.py` (MTL tasks), `data_utils.py` (sampling/paths)
+  - `models/` — `stage1_stage2_integration.py` (Stage1 wrapper), `model_utils.py` (LoRA/pretrained loaders)
+  - `tasks/` — `train_mtl_weatherqa.py` (Uniform MTL), `train_summary_centric.py` (Summary‑focused MTL)
+  - `inference/` — `inference_simple.py` (LoRA), `inference_simple_pretrained.py` (text‑only), `compare_inference_mtl.py`
+  - `eval/` — `text_similarity_embedding.py`, `text_similarity_llm_judge.py`, `check_cot_stats.py`, (legacy) `eval_simple.py`
+- `README.md` — setup, commands
+- `.gitignore`, `requirements.txt`
 
 **Dataset expected**: Gemini JSON, e.g.  
 `kse/ClimateToText/data/WeatherQA/gemini_element_captions_2014-2019.json`  
@@ -87,7 +84,7 @@ pip install -r requirements.txt   # if not already done above
 ### Case 1: Uniform MTL (Tasks A/B/C mixed)
 ```
 torchrun --nproc_per_node=2 --master_port 29510 \
-  -m twkim.climate_to_text_stage2.mtl_weatherqa.train_mtl_weatherqa \
+  -m src.tasks.train_mtl_weatherqa \
   --gemini-json kse/ClimateToText/data/WeatherQA/gemini_element_captions_2014-2019.json \
                 kse/ClimateToText/data/WeatherQA/gemini_element_captions_2020.json \
   --image-root kse/ClimateToText/data/WeatherQA \
@@ -110,7 +107,7 @@ torchrun --nproc_per_node=2 --master_port 29510 \
 ### Case 2: Summary‑Centric MTL (warm‑up A+C → summary‑heavy)
 ```
 torchrun --nproc_per_node=2 --master_port 29520 \
-  -m twkim.climate_to_text_stage2.mtl_weatherqa.train_summary_centric \
+  -m src.tasks.train_summary_centric \
   --gemini-json kse/ClimateToText/data/WeatherQA/gemini_element_captions_2014-2019.json \
                 kse/ClimateToText/data/WeatherQA/gemini_element_captions_2020.json \
   --image-root kse/ClimateToText/data/WeatherQA \
@@ -140,7 +137,7 @@ torchrun --nproc_per_node=2 --master_port 29520 \
 
 ### Stage2 (LoRA + Stage1 encoder)
 ```
-python -m twkim.climate_to_text_stage2.mtl_weatherqa.inference_simple \
+python -m src.inference.inference_simple \
   --json-path kse/ClimateToText/data/WeatherQA/gemini_element_captions_2014-2019.json \
   --image-root kse/ClimateToText/data/WeatherQA \
   --num-samples 3 \
@@ -154,7 +151,7 @@ python -m twkim.climate_to_text_stage2.mtl_weatherqa.inference_simple \
 
 ### Pretrained‑only baseline
 ```
-python -m twkim.climate_to_text_stage2.mtl_weatherqa.inference_simple_pretrained \
+python -m src.inference.inference_simple_pretrained \
   --json-path kse/ClimateToText/data/WeatherQA/gemini_element_captions_2014-2019.json \
   --image-root kse/ClimateToText/data/WeatherQA \
   --num-samples 3 \
@@ -165,7 +162,7 @@ python -m twkim.climate_to_text_stage2.mtl_weatherqa.inference_simple_pretrained
 
 ### Compare pretrained vs baseline vs MTL
 ```
-python -m twkim.climate_to_text_stage2.mtl_weatherqa.compare_inference_mtl \
+python -m src.inference.compare_inference_mtl \
   --json-path kse/ClimateToText/data/WeatherQA/gemini_element_captions_2014-2019.json \
   --image-root kse/ClimateToText/data/WeatherQA \
   --num-samples 3 \
@@ -177,20 +174,6 @@ python -m twkim.climate_to_text_stage2.mtl_weatherqa.compare_inference_mtl \
   --stage1-encoder-ckpt /home/agi592/kse/ClimateToText/stage1_curriculum_runs/step1_all_types/stage1_vision_encoder_mae.pt \
   --stage1-classifier-ckpt /home/agi592/csh/ClimateToText/checkpoints/standalone_cls_efficientnet/standalone_classifier_efficientnet_b0_best.pt
 ```
-
----
-
-## Evaluation
-
-`eval_simple.py` supports embedding similarity (and optional LLM judge) plus plotting.
-```
-python -m twkim.climate_to_text_stage2.eval_simple \
-  --max-samples 200 \
-  --num-print-samples 3 \
-  --metric embedding \
-  --plot-path twkim/checkpoints/eval_plot.png
-```
-Options allow selecting which models to load, which metrics to run, and saving plots of score distributions and per‑sample scores.
 
 ---
 

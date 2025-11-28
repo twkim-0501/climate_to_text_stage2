@@ -7,9 +7,9 @@ Simple inference for one Stage2 model (Stage1 encoder 기반).
 
 import argparse
 import torch
-from ..dataset import default_image_loader
-from .data_utils import build_image_transform, select_samples_gemini
-from .model_utils import load_stage2_lora
+from src.data.dataset import default_image_loader
+from src.data.data_utils import build_image_transform, select_samples_gemini
+from src.models.model_utils import load_stage2_lora
 
 
 def parse_args() -> argparse.Namespace:
@@ -59,7 +59,7 @@ def generate_text(
 
 def main() -> None:
     args = parse_args()
-    device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
     samples = select_samples_gemini(args.json_path, args.image_root, args.num_samples)

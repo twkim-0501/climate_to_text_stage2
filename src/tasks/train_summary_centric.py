@@ -27,9 +27,9 @@ from torchvision import transforms
 from transformers import AutoModelForCausalLM, AutoTokenizer, get_linear_schedule_with_warmup
 from peft import LoraConfig, get_peft_model
 
-from ..dataset import default_image_loader
-from ..stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
-from .datasets import ElementCaptionDataset, ElementSummaryLinkDataset, CaseSummaryFromCaptionsDataset
+from src.data.dataset import default_image_loader
+from src.models.stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
+from src.data.mtl_datasets import ElementCaptionDataset, ElementSummaryLinkDataset, CaseSummaryFromCaptionsDataset
 
 try:
     import torch.distributed as dist

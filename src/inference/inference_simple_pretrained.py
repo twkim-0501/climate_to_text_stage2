@@ -16,8 +16,8 @@ from __future__ import annotations
 
 import argparse
 import torch
-from .data_utils import select_samples_gemini
-from .model_utils import load_pretrained_llm
+from src.data.data_utils import select_samples_gemini
+from src.models.model_utils import load_pretrained_llm
 
 
 def parse_args() -> argparse.Namespace:
@@ -70,7 +70,7 @@ def generate_pretrained_text(
 
 def main() -> None:
     args = parse_args()
-    device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
     samples = select_samples_gemini(args.json_path, args.image_root, args.num_samples)

@@ -11,7 +11,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from peft import PeftModel
 
-from ..stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
+from .stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
 
 
 def load_stage1_encoder(

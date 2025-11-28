@@ -12,7 +12,7 @@ from torch.utils.data import Dataset, ConcatDataset
 from torch.utils.data.distributed import DistributedSampler
 from torchvision import transforms
 
-from ..dataset import default_image_loader
+from src.data.dataset import default_image_loader
 
 
 @dataclass

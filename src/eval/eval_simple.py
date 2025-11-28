@@ -33,11 +33,11 @@ from typing import Dict, List, Tuple
 import torch
 from torchvision import transforms
 
-from .dataset import default_image_loader
-from .inference_stage2 import load_stage2_model
-from .inference_stage2_stage1 import load_stage2_model_stage1
-from .text_similarity_embedding import EmbeddingSimilarityScorer
-from .text_similarity_llm_judge import LLMSimilarityJudge
+from src.data.dataset import default_image_loader
+from src.inference.inference_stage2 import load_stage2_model
+from src.inference.inference_stage2_stage1 import load_stage2_model_stage1
+from src.eval.text_similarity_embedding import EmbeddingSimilarityScorer
+from src.eval.text_similarity_llm_judge import LLMSimilarityJudge
 
 
 def parse_args() -> argparse.Namespace:

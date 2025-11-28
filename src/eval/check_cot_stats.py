@@ -20,7 +20,7 @@ from typing import List
 import torch
 from transformers import AutoTokenizer
 
-from .datasets import _split_sentences
+from src.data.mtl_datasets import _split_sentences
 
 
 def parse_args():

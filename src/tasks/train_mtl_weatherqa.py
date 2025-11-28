@@ -27,8 +27,8 @@ from torch.optim import AdamW
 from transformers import AutoTokenizer, AutoModelForCausalLM, get_linear_schedule_with_warmup
 from peft import LoraConfig, get_peft_model
 
-from ..stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
-from .datasets import build_mtl_dataset_and_loader
+from src.models.stage1_stage2_integration import Stage1ImageEncoderForStage2, ImageToTextModelStage1
+from src.data.mtl_datasets import build_mtl_dataset_and_loader
 
 try:
     import torch.distributed as dist
